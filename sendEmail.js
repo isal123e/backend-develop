@@ -2,29 +2,30 @@ const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 const sendVerificationEmail = (email, verifyToken) => {
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
+  const verifyLink = `http://localhost:3000/api/verify/${verifyToken}`;
+
+  let transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
     auth: {
-      user: process.env.EMAIL_DEV,
-      pass: process.env.PASSWORD_DEV,
+      type: "OAuth2",
+      clientId: process.env.EMAIL_ID,
+      clientSecret: process.env.EMAIL_SECRET,
     },
   });
 
-  const verifyLink = `http://localhost:3000/api/verify/${verifyToken}`;
-
-  const mailOptions = {
+  transporter.sendMail({
     from: process.env.EMAIL_DEV,
     to: email,
-    subject: "Verifikasi Email Kamu",
-    text: `Klik tautan ini untuk verifikasi email: ${verifyLink}`,
-  };
-
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("email terkirim");
-    }
+    subject: "Message",
+    text: `link verifikasi kamu ${verifyLink}`,
+    auth: {
+      user: process.env.EMAIL_DEV,
+      refreshToken: process.env.REFRESH_TOKEN,
+      accessToken: process.env.ACCESS_TOKEN,
+      expires: process.env.EXPIRES,
+    },
   });
 };
 
