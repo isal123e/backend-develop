@@ -59,7 +59,6 @@ router.get("/:token/:username", async (req, res) => {
 router.post("/resend/:username", async (req, res) => {
   const username = req.params.username;
   const user = await User.findOne({ username });
-  console.log(user);
   const verifyEmailToken = jwt.sign({ user }, process.env.VERIFY_TOKEN, {
     expiresIn: "5m",
   });
