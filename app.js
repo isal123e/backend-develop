@@ -6,6 +6,7 @@ const passport = require("passport");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const app = express();
+const sendMail = require("./sendEmail");
 const sessionMiddleware = session({
   secret: "keyboard cat",
   resave: true,
@@ -31,6 +32,10 @@ const user = require("./routes/user");
 
 app.get("/", (req, res) => {
   res.json("halooo");
+});
+app.post("/cek", (req, res) => {
+  const { email } = req.body;
+  sendMail(email, "ini verify token ya kimak");
 });
 app.use("/api/google", login_google);
 app.use("/api/login", login_local);
