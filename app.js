@@ -5,8 +5,8 @@ const cors = require("cors");
 const passport = require("passport");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
+const path = require("path");
 const app = express();
-const sendMail = require("./sendEmail");
 const sessionMiddleware = session({
   secret: "keyboard cat",
   resave: true,
@@ -20,6 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.static(path.join(__dirname, "public")));
 
 app.set("views", "views");
 app.set("view engine", "ejs");
@@ -32,10 +33,6 @@ const user = require("./routes/user");
 
 app.get("/", (req, res) => {
   res.json("halooo");
-});
-app.post("/cek", (req, res) => {
-  const { email } = req.body;
-  sendMail(email, "ini verify token ya kimak");
 });
 app.use("/api/google", login_google);
 app.use("/api/login", login_local);

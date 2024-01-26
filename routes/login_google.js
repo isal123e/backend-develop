@@ -15,6 +15,7 @@ router.get(
   passport.authenticate("google", { failureRedirect: "/" }),
   async (req, res) => {
     try {
+      console.log(req.user.data.id);
       const found = await User.findOne({ "email.value": req.user.data.email });
       if (!found) {
         const user = new User({

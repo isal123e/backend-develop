@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 
-const sendVerificationEmail = (email, verifyToken) => {
+const sendVerificationEmail = (email, verifyToken, username) => {
   const verifyLink = `${process.env.CYCLIC_URL}/api/verify/${verifyToken}`;
 
   const transporter = nodemailer.createTransport({
@@ -16,8 +16,8 @@ const sendVerificationEmail = (email, verifyToken) => {
     .sendMail({
       from: process.env.EMAIL_DEV,
       to: email,
-      subject: "Message",
-      text: `link verifikasi kamu ${verifyLink}`,
+      subject: "MR DEFACTO - EMAIL VERIFICATION",
+      html: `<p>Klik Di sini untuk Memverifikasi Email Kamu <a href="${verifyLink}/${username}">Verifikasi</a></p>`,
       auth: {
         user: process.env.EMAIL_DEV,
         refreshToken: process.env.REFRESH_TOKEN,

@@ -7,8 +7,8 @@ const { User } = require("../user-model");
 const validator = require("validator");
 
 const validEmail = (req, res, next) => {
-  const { username, password, email, gender, age } = req.body;
-  if (!username || !password || !email || !gender || !age) {
+  const { username, password, email } = req.body;
+  if (!username || !password || !email) {
     return res
       .status(400)
       .json({ message: "Semua field harus diisi", success: false });
@@ -24,7 +24,20 @@ router.post("/", validEmail, async (req, res) => {
   try {
     const { username, password, email, gender, age } = req.body;
     const foundUsername = await User.findOne({ username });
-    const foundEmail = await User.findOne({ email });
+    const foundEmail = await User.findOne({ "email.value": email });
+
+    if (foundEmail) {
+      return res.json({
+        message: "Email sudah digunakan",
+        success: false,
+      });
+    }
+    if (foundUsername) {
+      return res.json({
+        message: "Username sudah digunakan",
+        success: false,
+      });
+    }
 
     if (!foundUsername && !foundEmail) {
       const salt = 10;
@@ -42,7 +55,7 @@ router.post("/", validEmail, async (req, res) => {
         expiresIn: "15m",
       });
 
-      await sendVerificationEmail(email, verifyEmailToken);
+      await sendVerificationEmail(email, verifyEmailToken, user.username);
 
       user.save().then(() => {
         console.log("berhasil menyimpan di database");
@@ -52,11 +65,6 @@ router.post("/", validEmail, async (req, res) => {
         message:
           "Akun berhasil dibuat, silahkan cek email kamu untuk verifikasi",
         success: true,
-      });
-    } else {
-      return res.json({
-        message: "Email atau Username sudah digunakan",
-        success: false,
       });
     }
   } catch (error) {

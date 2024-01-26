@@ -1,48 +1,91 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-
 const user = new Schema({
-  username: String,
+  username: {
+    type: String,
+    default: null,
+  },
   email: {
-    value: String,
+    value: {
+      type: String,
+      default: null,
+    },
     valid: {
       type: Boolean,
-      default: false
+      default: false,
     },
   },
-  usedVerifyToken:[{
-    type: String
-  }],
+  usedVerifyToken: [
+    {
+      type: String,
+      default: null,
+    },
+  ],
   password: String,
+
   googleId: String,
+
   created_at: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
-  gender: String,
-  age: Number,
+  gender: {
+    type: String,
+    default: null,
+  },
+  age: {
+    type: Number,
+    default: null,
+  },
   avatar: {
-    placeholder: String,
-    image_url: String
+    placeholder: {
+      type: String,
+      default: null,
+    },
+    image_url: {
+      type: String,
+      default: null,
+    },
   },
   player_data: {
     avatar: {
-      now_used: String,
-      collected:{
-        id: String,
-        image_url: String,
-      }
+      now_used: {
+        type: String,
+        default: null,
+      },
+      collected: {
+        id: {
+          type: String,
+          default: null,
+        },
+        image_url: {
+          type: String,
+          default: null,
+        },
+      },
     },
-    level: Number,
-    achievements:{
-      id: String,
-      type: String,
-      rewards: Object
-    }
-  }
+    level: {
+      type: Number,
+      default: null,
+    },
+    achievements: {
+      id: {
+        type: String,
+        default: null,
+      },
+      type: {
+        type: String,
+        default: null,
+      },
+      rewards: {
+        type: Object,
+        default: null,
+      },
+    },
+  },
 });
 
-const User = mongoose.model('User', user);
+const User = mongoose.model("User", user);
 
 module.exports = { User };

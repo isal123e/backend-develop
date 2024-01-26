@@ -2,26 +2,27 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const { User } = require("../user-model");
+const sendVerificationEmail = require("../sendEmail");
 
-router.get("/:token", async (req, res) => {
+router.get("/:token/:username", async (req, res) => {
   const token = req.params.token;
+  const username = req.params.username;
 
   if (!token) {
-    return res
-      .status(401)
-      .json({
-        message: "Tidak ada sesi login, silahkan login dulu",
-        success: false,
-      });
+    return res.status(401).json({
+      message: "Tidak ada sesi login, silahkan login dulu",
+      success: false,
+    });
   }
 
   try {
     const decoded = jwt.verify(token, process.env.VERIFY_TOKEN);
     const user = await User.findById(decoded.user._id);
     if (user.usedVerifyToken.includes(token)) {
-      return res.json({
-        message: "Akun anda sudah terverifikasi",
-        success: false,
+      return res.render("email", {
+        header: "SILAHKAN LOGIN DETECTIVE!",
+        text: "Akun Kamu sudah terverifikasi. Silahkan login",
+        link: ["https://emtris.team/", "MULAI PENYIDIKAN SEKARANG!"],
       });
     } else {
       user.email.valid = true;
@@ -29,11 +30,35 @@ router.get("/:token", async (req, res) => {
       await user.save();
     }
   } catch (err) {
-    res.json({ message: "link anda tidak valid", success: false });
+    return res.render("email", {
+      header: "LINK KAMU SUDAH KADALUARSA",
+      text: "Kamu bisa meminta link baru",
+      link: [
+        `${process.env.CYCLIC_URL}/resend/${username}`,
+        "KIRIM ULANG LINK",
+      ],
+    });
   }
-  res
-    .status(201)
-    .json({ message: "Anda terverifikasi, silahkan login", success: true });
+
+  res.render("email", {
+    header: "SELAMAT DATANG DETECTIVE!",
+    text: "Kami sangat senang atas bergabungnya kamu ke Tim Detektif Mr Defacto. Ayo, bantu Mr Defacto menyelesaikan kasus misteri yang mendebarkan dan penuh petualangan.",
+    link: ["https://emtris.team/", "MULAI PENYIDIKAN SEKARANG!"],
+  });
+});
+
+router.post("/resend/:username", async (req, res) => {
+  const username = req.params.username;
+  const user = User.findOne({ username });
+  const verifyEmailToken = jwt.sign({ user }, process.env.VERIFY_TOKEN, {
+    expiresIn: "5m",
+  });
+  await sendVerificationEmail(email, verifyEmailToken, user.username);
+  res.render("email", {
+    header: "LINK VERIFICATION SUDAH DIKIRIM!",
+    text: "Link sudah dikirim kembali, silahkan cek email anda",
+    link: ["", "MULAI PENYIDIKAN SEKARANG!"],
+  });
 });
 
 module.exports = router;

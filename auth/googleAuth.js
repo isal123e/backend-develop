@@ -7,7 +7,7 @@ passport.use(
     {
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      callbackURL: `${process.env.CYCLIC_URL}/api/google/callback`,
+      callbackURL: `http://localhost:3000/api/google/callback`,
     },
     function (accessToken, refreshToken, profile, cb) {
       const user = {
