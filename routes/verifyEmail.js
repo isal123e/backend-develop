@@ -59,9 +59,8 @@ router.get("/:token/:username", async (req, res) => {
 router.post("/resend/:username", async (req, res) => {
   const username = req.params.username;
   const user = User.findOne({ username });
-    console.log('tipe datanya adalah ' + typeof user);
-
-  const verifyEmailToken = jwt.sign({ user }, process.env.VERIFY_TOKEN, {
+  const data = user.toObject();
+  const verifyEmailToken = jwt.sign({ data }, process.env.VERIFY_TOKEN, {
     expiresIn: "5m",
   });
   await sendVerificationEmail(email, verifyEmailToken, user.username);
