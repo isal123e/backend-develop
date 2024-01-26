@@ -52,7 +52,7 @@ router.post("/", validEmail, async (req, res) => {
       });
 
       const verifyEmailToken = jwt.sign({ user }, process.env.VERIFY_TOKEN, {
-        expiresIn: "15m",
+        expiresIn: "5m",
       });
 
       await sendVerificationEmail(email, verifyEmailToken, user.username);
