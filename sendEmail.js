@@ -2,12 +2,10 @@ const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 const sendVerificationEmail = (email, verifyToken) => {
-  const verifyLink = `http://localhost:3000/api/verify/${verifyToken}`;
+  const verifyLink = `${process.env.CYCLIC_URL}/api/verify/${verifyToken}`;
 
   let transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
     auth: {
       type: "OAuth2",
       clientId: process.env.EMAIL_ID,
