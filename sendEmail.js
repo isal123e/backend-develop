@@ -17,7 +17,7 @@ const sendVerificationEmail = (email, verifyToken, username) => {
       from: process.env.EMAIL_DEV,
       to: email,
       subject: "MR DEFACTO - EMAIL VERIFICATION",
-      html: `<p>Klik Di sini untuk Memverifikasi Email Kamu <a href="${verifyLink}/${username}">Verifikasi</a></p>`,
+      html: `<p>Klik Di sini untuk Memverifikasi Email Kamu. Link akand kadaluarsa dalam 5 menit <a href="${verifyLink}/${username}">Verifikasi</a></p>`,
       auth: {
         user: process.env.EMAIL_DEV,
         refreshToken: process.env.REFRESH_TOKEN,
