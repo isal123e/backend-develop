@@ -38,7 +38,7 @@ router.get("/:token/:username", async (req, res) => {
       text: "Kamu bisa meminta link baru",
       link: [
         {
-          url: `${process.env.CYCLIC_URL}/resend/verify/${username}`,
+          url: `${process.env.CYCLIC_URL}/api/verify/resend/${username}`,
           method: "post",
         },
         "KIRIM ULANG LINK",
@@ -56,7 +56,7 @@ router.get("/:token/:username", async (req, res) => {
   });
 });
 
-router.post("/resend/verify/:username", async (req, res) => {
+router.post("/resend/:username", async (req, res) => {
   const username = req.params.username;
   const user = User.findOne({ username });
   const verifyEmailToken = jwt.sign({ user }, process.env.VERIFY_TOKEN, {
