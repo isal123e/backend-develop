@@ -4,16 +4,15 @@ require("dotenv").config();
 const sendVerificationEmail = (email, verifyToken) => {
   const verifyLink = `${process.env.CYCLIC_URL}/api/verify/${verifyToken}`;
 
-  let transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
     auth: {
-      type: "OAuth2",
-      clientId: process.env.EMAIL_ID,
-      clientSecret: process.env.EMAIL_SECRET,
+      user: process.env.EMAIL_DEV,
+      pass: process.env.PASSWORD_DEV,
     },
   });
 
-  transporter
+  return transporter
     .sendMail({
       from: process.env.EMAIL_DEV,
       to: email,
@@ -28,9 +27,6 @@ const sendVerificationEmail = (email, verifyToken) => {
     })
     .then(() => {
       console.log("berhasil terikirim!");
-    })
-    .catch((e) => {
-      console.log(e);
     });
 };
 
