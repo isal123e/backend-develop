@@ -38,13 +38,15 @@ router.post("/", validEmail, async (req, res) => {
         age,
       });
 
-      await user.save();
-
-      const verifyEmailToken = jwt.sign({ user }, process.env.SECRET_TOKEN, {
-        expiresIn: "7d",
+      const verifyEmailToken = jwt.sign({ user }, process.env.VERIFY_TOKEN, {
+        expiresIn: "15m",
       });
 
-      sendVerificationEmail(email, verifyEmailToken);
+      await sendVerificationEmail(email, verifyEmailToken);
+
+      user.save().then(() => {
+        console.log("berhasil menyimpan di database");
+      });
 
       res.status(201).json({
         message:
