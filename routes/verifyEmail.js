@@ -37,7 +37,10 @@ router.get("/:token/:username", async (req, res) => {
       header: "LINK KAMU SUDAH KADALUARSA",
       text: "Kamu bisa meminta link baru",
       link: [
-        { url: `${process.env.CYCLIC_URL}/resend/${username}`, method: "post" },
+        {
+          url: `${process.env.CYCLIC_URL}/resend/verify/${username}`,
+          method: "post",
+        },
         "KIRIM ULANG LINK",
       ],
     });
@@ -53,7 +56,7 @@ router.get("/:token/:username", async (req, res) => {
   });
 });
 
-router.post("/resend/:username", async (req, res) => {
+router.post("/resend/verify/:username", async (req, res) => {
   const username = req.params.username;
   const user = User.findOne({ username });
   const verifyEmailToken = jwt.sign({ user }, process.env.VERIFY_TOKEN, {
