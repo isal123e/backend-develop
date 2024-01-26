@@ -13,18 +13,25 @@ const sendVerificationEmail = (email, verifyToken) => {
     },
   });
 
-  transporter.sendMail({
-    from: process.env.EMAIL_DEV,
-    to: email,
-    subject: "Message",
-    text: `link verifikasi kamu ${verifyLink}`,
-    auth: {
-      user: process.env.EMAIL_DEV,
-      refreshToken: process.env.REFRESH_TOKEN,
-      accessToken: process.env.ACCESS_TOKEN,
-      expires: process.env.EXPIRES,
-    },
-  });
+  transporter
+    .sendMail({
+      from: process.env.EMAIL_DEV,
+      to: email,
+      subject: "Message",
+      text: `link verifikasi kamu ${verifyLink}`,
+      auth: {
+        user: process.env.EMAIL_DEV,
+        refreshToken: process.env.REFRESH_TOKEN,
+        accessToken: process.env.ACCESS_TOKEN,
+        expires: process.env.EXPIRES,
+      },
+    })
+    .then(() => {
+      console.log("berhasil terikirim!");
+    })
+    .catch((e) => {
+      console.log(e);
+    });
 };
 
 module.exports = sendVerificationEmail;
