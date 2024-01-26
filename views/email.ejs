@@ -1,70 +1,100 @@
-const express = require("express");
-const router = express.Router();
-const jwt = require("jsonwebtoken");
-const { User } = require("../user-model");
-const sendVerificationEmail = require("../sendEmail");
-
-router.get("/:token/:username", async (req, res) => {
-  const token = req.params.token;
-  const username = req.params.username;
-
-  if (!token) {
-    return res.status(401).json({
-      message: "Tidak ada sesi login, silahkan login dulu",
-      success: false,
-    });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.VERIFY_TOKEN);
-    const user = await User.findById(decoded.user._id);
-    if (user.usedVerifyToken.includes(token)) {
-      return res.render("email", {
-        header: "SILAHKAN LOGIN DETECTIVE!",
-        text: "Akun Kamu sudah terverifikasi. Silahkan login",
-        link: [
-          { url: "https://emtris.team/", method: "get" },
-          "MULAI PENYIDIKAN SEKARANG!",
-        ],
-      });
-    } else {
-      user.email.valid = true;
-      user.usedVerifyToken.push(token);
-      await user.save();
-    }
-  } catch (err) {
-    return res.render("email", {
-      header: "LINK KAMU SUDAH KADALUARSA",
-      text: "Kamu bisa meminta link baru",
-      link: [
-        { url: `${process.env.CYCLIC_URL}/resend/${username}`, method: "post" },
-        "KIRIM ULANG LINK",
-      ],
-    });
-  }
-
-  res.render("email", {
-    header: "SELAMAT DATANG DETECTIVE!",
-    text: "Kami sangat senang atas bergabungnya kamu ke Tim Detektif Mr Defacto. Ayo, bantu Mr Defacto menyelesaikan kasus misteri yang mendebarkan dan penuh petualangan.",
-    link: [
-      { url: "https://emtris.team/", method: "get" },
-      "MULAI PENYIDIKAN SEKARANG!",
-    ],
-  });
-});
-
-router.post("/resend/:username", async (req, res) => {
-  const username = req.params.username;
-  const user = User.findOne({ username });
-  const verifyEmailToken = jwt.sign({ user }, process.env.VERIFY_TOKEN, {
-    expiresIn: "5m",
-  });
-  await sendVerificationEmail(email, verifyEmailToken, user.username);
-  res.render("email", {
-    header: "LINK VERIFICATION SUDAH DIKIRIM!",
-    text: "Link sudah dikirim kembali, silahkan cek email anda",
-    link: [{ url: "https://emtris.team/", method: "get" }, "OKEYY!"],
-  });
-});
-
-module.exports = router;
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="/views/css/output.css" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Karla", sans-serif;
+      }
+      body {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-image: url("/img/Homepage.webp");
+        background-size: cover;
+        background-repeat: no-repeat;
+        backdrop-filter: brightness(50%);
+      }
+      .container {
+        width: 480px;
+        height: 424px;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-evenly;
+        background-color: #08222d;
+        border: 2px solid #867209;
+      }
+      .container h1 {
+        padding-bottom: 8px;
+        border-bottom: 2px solid #867209;
+        background: #fff8d1;
+        background: linear-gradient(
+          to bottom,
+          #fff8d1 0%,
+          #bfa622 36%,
+          #453b06 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        width: 85%;
+        font-size: 16px;
+        text-transform: uppercase;
+      }
+      .container img {
+        width: 85%;
+        height: 210px;
+        object-fit: contain;
+        border-radius: 10px;
+      }
+      .container p {
+        color: #9cbbc8;
+        width: 85%;
+        font-size: 14px;
+        text-align: start;
+      }
+      .container form {
+        width: 85%;
+        height: 35px;
+        background: #fff8d1;
+        color: #292409;
+        font-size: 14px;
+        background: linear-gradient(
+          to bottom,
+          #fff8d1 0%,
+          #bfa622 36%,
+          #453b06 100%
+        );
+        border-radius: 5px;
+        text-decoration: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+      }
+    </style>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Karla&display=swap");
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1><%= header %></h1>
+      <img src="/img/1.webp" alt="" />
+      <p><%= text %></p>
+      <form action="<%=link[0].url%>" method="<%=link[0].method%>">
+        <button><%=link[1]%></button>
+      </form>
+    </div>
+  </body>
+</html>
