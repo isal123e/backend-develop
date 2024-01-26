@@ -58,12 +58,16 @@ router.get("/:token/:username", async (req, res) => {
 
 router.post("/resend/:username", async (req, res) => {
   const username = req.params.username;
-  const user = User.findOne({ username });
-  const data = user.toObject();
-  const verifyEmailToken = jwt.sign({ data }, process.env.VERIFY_TOKEN, {
+  const user = await User.findOne({ username });
+  console.log(user);
+  const verifyEmailToken = jwt.sign({ user }, process.env.VERIFY_TOKEN, {
     expiresIn: "5m",
   });
-  await sendVerificationEmail(email, verifyEmailToken, user.username);
+  await sendVerificationEmail(
+    user.email.value,
+    verifyEmailToken,
+    user.username
+  );
   res.render("email", {
     header: "LINK VERIFICATION SUDAH DIKIRIM!",
     text: "Link sudah dikirim kembali, silahkan cek email anda",
