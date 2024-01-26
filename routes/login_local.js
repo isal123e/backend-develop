@@ -23,12 +23,17 @@ router.post("/", (req, res, next) => {
     }
     user = await User.findById(user.id);
 
-    if (user) {
+    if (user.email.valid) {
       const token = jwt.sign({ user }, process.env.SECRET_TOKEN, {
         expiresIn: "7d",
       });
       res.cookie("Token", token, { secure: true });
       return res.json({ success: true, message: "Login berhasil", user });
+    } else {
+      return res.json({
+        success: false,
+        message: "Login gagal, kamu belum verifikasi email",
+      });
     }
   })(req, res, next);
 });
