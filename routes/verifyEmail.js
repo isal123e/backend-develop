@@ -22,7 +22,10 @@ router.get("/:token/:username", async (req, res) => {
       return res.render("email", {
         header: "SILAHKAN LOGIN DETECTIVE!",
         text: "Akun Kamu sudah terverifikasi. Silahkan login",
-        link: ["https://emtris.team/", "MULAI PENYIDIKAN SEKARANG!"],
+        link: [
+          { url: "https://emtris.team/", method: "get" },
+          "MULAI PENYIDIKAN SEKARANG!",
+        ],
       });
     } else {
       user.email.valid = true;
@@ -34,7 +37,7 @@ router.get("/:token/:username", async (req, res) => {
       header: "LINK KAMU SUDAH KADALUARSA",
       text: "Kamu bisa meminta link baru",
       link: [
-        `${process.env.CYCLIC_URL}/resend/${username}`,
+        { url: `${process.env.CYCLIC_URL}/resend/${username}`, method: "post" },
         "KIRIM ULANG LINK",
       ],
     });
@@ -43,7 +46,10 @@ router.get("/:token/:username", async (req, res) => {
   res.render("email", {
     header: "SELAMAT DATANG DETECTIVE!",
     text: "Kami sangat senang atas bergabungnya kamu ke Tim Detektif Mr Defacto. Ayo, bantu Mr Defacto menyelesaikan kasus misteri yang mendebarkan dan penuh petualangan.",
-    link: ["https://emtris.team/", "MULAI PENYIDIKAN SEKARANG!"],
+    link: [
+      { url: "https://emtris.team/", method: "get" },
+      "MULAI PENYIDIKAN SEKARANG!",
+    ],
   });
 });
 
@@ -57,7 +63,7 @@ router.post("/resend/:username", async (req, res) => {
   res.render("email", {
     header: "LINK VERIFICATION SUDAH DIKIRIM!",
     text: "Link sudah dikirim kembali, silahkan cek email anda",
-    link: ["", "MULAI PENYIDIKAN SEKARANG!"],
+    link: [{ url: "https://emtris.team/", method: "get" }, "OKEYY!"],
   });
 });
 
