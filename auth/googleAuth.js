@@ -7,7 +7,7 @@ passport.use(
     {
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
-      callbackURL: "https://healthy-leg-warmers-bull.cyclic.app/api/google/callback",
+      callbackURL: `${process.env.CYCLIC_URL}/api/google/callback`,
     },
     function (accessToken, refreshToken, profile, cb) {
       const user = {
