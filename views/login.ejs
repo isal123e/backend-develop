@@ -27,6 +27,7 @@
         // Fetch API untuk mengirim permintaan POST
         fetch("https://tricky-puce-walkingstick.cyclic.app/api/auth/signin", {
           method: "POST",
+          credentials: 'include',
           headers: {
             "Content-Type": "application/json",
           },
