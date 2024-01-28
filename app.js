@@ -13,7 +13,11 @@ const sessionMiddleware = session({
   saveUninitialized: true,
 });
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://127.0.0.1:3000",
+  })
+);
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -29,14 +33,19 @@ const login_google = require("./routes/login_google");
 const login_local = require("./routes/login_local");
 const signup_local = require("./routes/signup_local");
 const verifyEmail = require("./routes/verifyEmail");
+const character = require("./routes/character");
 const user = require("./routes/user");
 
+app.get("/login", (req, res) => {
+  res.render("login");
+});
 app.get("/", (req, res) => {
   res.json("halooo");
 });
 app.use("/api/google", login_google);
-app.use("/api/login", login_local);
-app.use("/api/signup", signup_local);
+app.use("/api/character", character);
+app.use("/api/auth/signin", login_local);
+app.use("/api/auth/signup", signup_local);
 app.use("/api/verify", verifyEmail);
 app.use("/api/user", user);
 

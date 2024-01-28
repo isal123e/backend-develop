@@ -18,7 +18,7 @@ router.get("/:token/:username", async (req, res) => {
   try {
     const decoded = jwt.verify(token, process.env.VERIFY_TOKEN);
     const user = await User.findById(decoded.user._id);
-    if (user.usedVerifyToken.includes(token)) {
+    if (user.email.valid) {
       return res.render("email", {
         header: "SILAHKAN LOGIN DETECTIVE!",
         text: "Akun Kamu sudah terverifikasi. Silahkan login",
@@ -29,8 +29,15 @@ router.get("/:token/:username", async (req, res) => {
       });
     } else {
       user.email.valid = true;
-      user.usedVerifyToken.push(token);
       await user.save();
+      return res.render("email", {
+        header: "SELAMAT DATANG DETECTIVE!",
+        text: "Kami sangat senang atas bergabungnya kamu ke Tim Detektif Mr Defacto. Ayo, bantu Mr Defacto menyelesaikan kasus misteri yang mendebarkan dan penuh petualangan.",
+        link: [
+          { url: "https://emtris.team/", method: "get" },
+          "MULAI PENYIDIKAN SEKARANG!",
+        ],
+      });
     }
   } catch (err) {
     return res.render("email", {
@@ -45,15 +52,6 @@ router.get("/:token/:username", async (req, res) => {
       ],
     });
   }
-
-  res.render("email", {
-    header: "SELAMAT DATANG DETECTIVE!",
-    text: "Kami sangat senang atas bergabungnya kamu ke Tim Detektif Mr Defacto. Ayo, bantu Mr Defacto menyelesaikan kasus misteri yang mendebarkan dan penuh petualangan.",
-    link: [
-      { url: "https://emtris.team/", method: "get" },
-      "MULAI PENYIDIKAN SEKARANG!",
-    ],
-  });
 });
 
 router.post("/resend/:username", async (req, res) => {

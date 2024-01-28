@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require("../auth/localAuth");
 const { User } = require("../user-model");
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 router.get("/", (req, res) => {
   res.render("login");
@@ -17,18 +18,21 @@ router.post("/", (req, res, next) => {
     }
 
     if (!user) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Otentikasi gagal" });
+      return res.status(401).json({ success: false, message: info.message });
     }
-    user = await User.findById(user.id);
+
+    user = await User.findById(user.id).select("-password");
 
     if (user.email.valid) {
       const token = jwt.sign({ user }, process.env.SECRET_TOKEN, {
         expiresIn: "7d",
       });
-      res.cookie("Token", token, { secure: true });
-      return res.json({ success: true, message: "Login berhasil", user });
+      res.cookie("Token", token, { secure: true, sameSite: "none" });
+      return res.json({
+        success: true,
+        message: "Login berhasil",
+        user,
+      });
     } else {
       return res.json({
         success: false,

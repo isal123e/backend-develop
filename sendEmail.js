@@ -16,8 +16,22 @@ const sendVerificationEmail = (email, verifyToken, username) => {
     .sendMail({
       from: process.env.EMAIL_DEV,
       to: email,
-      subject: "MR DEFACTO - EMAIL VERIFICATION",
-      html: `<p>Klik Di sini untuk Memverifikasi Email Kamu. Link akand kadaluarsa dalam 5 menit <a href="${verifyLink}/${username}">Verifikasi</a></p>`,
+      subject:
+        "DEFACTO: HIDDEN TRUTH - DETECTIVE GAME - BETA EMAIL VERIFICATION",
+      html: `
+      <p>
+      Halo, Selamat Datang di Beta Test Dfacto Hidden Truth Detective Game. Sebelum Anda memulai, harap verifikasi alamat email Anda. 
+      Klik <a href="${verifyLink}/${username}">di sini</a> untuk verifikasi. Harap dicatat bahwa tautan ini hanya berlaku selama 5 menit.
+      </p>
+      <img src="cid:gbgPIUrI"/>
+      `,
+      attachments: [
+        {
+          filename: "image.png",
+          path: "public/img/email.webp",
+          cid: "gbgPIUrI",
+        },
+      ],
       auth: {
         user: process.env.EMAIL_DEV,
         refreshToken: process.env.REFRESH_TOKEN,
